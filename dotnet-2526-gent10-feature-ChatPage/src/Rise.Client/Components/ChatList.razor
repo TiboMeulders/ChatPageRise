@@ -1,0 +1,258 @@
+@using Rise.Client.Identity.Models
+@* ChatList.razor - Mobile-first contactenlijst *@
+
+<div class="chat-list">
+    <div class="chat-list-header">
+        <h1>💬 Chat</h1>
+        <button class="help-button" @onclick="ShowHelp" aria-label="Hulp">
+            <span>?</span>
+        </button>
+    </div>
+
+    <div class="contacts-container">
+        @foreach (var contact in contacts)
+        {
+            <div class="contact-item" 
+                 @onclick="() => SelectContact(contact)"
+                 role="button"
+                 tabindex="0">
+                
+                <div class="contact-main">
+                    <div class="contact-avatar">
+                        <span>@contact.Name[0]</span>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="contact-name-row">
+                            <span class="contact-name">@contact.Name</span>
+                            <span class="contact-status-dot @(contact.IsOnline ? "online" : "offline")"
+                                  aria-label="@(contact.IsOnline ? "Online" : "Offline")"></span>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(contact.LastMessage))
+                        {
+                            <span class="last-message">@contact.LastMessage</span>
+                        }
+                    </div>
+                </div>
+
+                @if (contact.HasSosAlert)
+                {
+                    <div class="sos-badge">
+                        <span>🚨 SOS</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<Contact> OnContactSelected { get; set; }
+
+    // Mock data - later vervangen door API calls
+    private List<Contact> contacts = new()
+    {
+        new Contact 
+        { 
+            Id = 1, 
+            Name = "Emilia", 
+            IsOnline = true, 
+            HasSosAlert = false,
+            LastMessage = "Hoe gaat het?",
+            LastMessageTime = DateTime.Now.AddMinutes(-5)
+        },
+        new Contact 
+        { 
+            Id = 2, 
+            Name = "Amber", 
+            IsOnline = false, 
+            HasSosAlert = false,
+            LastMessage = "Tot morgen!",
+            LastMessageTime = DateTime.Now.AddHours(-2)
+        },
+        new Contact 
+        { 
+            Id = 3, 
+            Name = "Laura", 
+            IsOnline = true, 
+            HasSosAlert = false,
+            LastMessage = "Wat doe je?",
+            LastMessageTime = DateTime.Now.AddMinutes(-30)
+        },
+        new Contact 
+        { 
+            Id = 4, 
+            Name = "Jitte", 
+            IsOnline = false, 
+            HasSosAlert = false,
+            LastMessage = "Bedankt voor je hulp!",
+            LastMessageTime = DateTime.Now.AddDays(-1)
+        },
+        new Contact 
+        { 
+            Id = 5, 
+            Name = "Jinthe", 
+            IsOnline = false, 
+            HasSosAlert = false,
+            LastMessage = "Spreken we af dit weekend?",
+            LastMessageTime = DateTime.Now.AddDays(-2)
+        }
+    };
+
+    private async Task SelectContact(Contact contact)
+    {
+        await OnContactSelected.InvokeAsync(contact);
+    }
+
+    private void ShowHelp()
+    {
+        // TODO: Toon help overlay
+    }
+}
+
+<style>
+    .chat-list {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: white;
+    }
+
+    .chat-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        border-bottom: 2px solid #e0e0e0;
+        min-height: 70px;
+    }
+
+    .chat-list-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .help-button {
+        min-width: 50px;
+        min-height: 50px;
+        border-radius: 50%;
+        border: 3px solid #333;
+        background: white;
+        cursor: pointer;
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .help-button:active {
+        background: #e0e0e0;
+        transform: scale(0.95);
+    }
+
+    .contacts-container {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.2rem;
+        border-bottom: 2px solid #e0e0e0;
+        cursor: pointer;
+        background: white;
+        transition: background 0.2s;
+        min-height: 85px;
+    }
+
+    .contact-item:active {
+        background: #f0f0f0;
+    }
+
+    .contact-main {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .contact-avatar {
+        width: 55px;
+        height: 55px;
+        min-width: 55px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FFE5D9 0%, #FFD4BD 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #FF6B35;
+    }
+
+    .contact-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-width: 0;
+    }
+
+    .contact-name-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .contact-name {
+        font-size: 1.4rem;
+        color: #FF6B35;
+        font-weight: 600;
+    }
+
+    .contact-status-dot {
+        width: 14px;
+        height: 14px;
+        min-width: 14px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+    }
+
+    .contact-status-dot.online {
+        background: #4CAF50;
+    }
+
+    .contact-status-dot.offline {
+        background: #9E9E9E;
+    }
+
+    .last-message {
+        font-size: 1rem;
+        color: #666;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .sos-badge {
+        background: #FF3B30;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+    }
+</style>

@@ -1,0 +1,46 @@
+@attribute [AllowAnonymous]
+@page "/chat"
+@using Rise.Client.Components
+@using Rise.Client.Identity.Models
+
+<PageTitle>Chat - NODO</PageTitle>
+<link rel="stylesheet" href="css/chat.css" />
+
+<div class="chat-page">
+    @if (_selectedContact != null)
+    {
+        <!-- Mobile: alleen chatvenster -->
+        <div class="mobile-only">
+            <ChatWindow Contact="@_selectedContact" OnBack="ClearSelection" />
+        </div>
+        
+        <!-- Desktop: beide panelen -->
+        <div class="desktop-layout">
+            <div class="chat-sidebar">
+                <ChatList OnContactSelected="SelectContact" />
+            </div>
+            <div class="chat-main">
+                <ChatWindow Contact="@_selectedContact" OnBack="ClearSelection" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Alleen contactenlijst (altijd zichtbaar als geen contact geselecteerd) -->
+        <ChatList OnContactSelected="SelectContact" />
+    }
+</div>
+
+@code {
+    private Contact? _selectedContact;
+
+    private void SelectContact(Contact contact)
+    {
+        _selectedContact = contact;
+    }
+
+    private void ClearSelection()
+    {
+        _selectedContact = null;
+    }
+}
