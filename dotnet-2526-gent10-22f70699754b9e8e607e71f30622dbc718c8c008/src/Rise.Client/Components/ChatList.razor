@@ -1,0 +1,117 @@
+@using Rise.Client.Identity.Models
+
+<div class="h-full flex flex-col bg-white">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-4 border-b-2 border-gray-200 min-h-[70px] bg-white">
+        <h1 class="text-2xl font-bold text-gray-800">Chat</h1>
+        <button @onclick="ShowHelp" 
+                class="w-12 h-12 rounded-full border-3 border-gray-800 bg-white flex items-center justify-center text-xl font-bold hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                aria-label="Hulp">
+            <span>?</span>
+        </button>
+    </div>
+
+    <!-- Contact List -->
+    <div class="flex-1 overflow-y-auto bg-white">
+        @foreach (var contact in contacts)
+        {
+            <div class="flex items-center justify-between p-4 border-b-2 border-gray-200 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[85px] bg-white"
+                 @onclick="() => SelectContact(contact)"
+                 role="button"
+                 tabindex="0">
+                
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                    <!-- Avatar -->
+                    <div class="w-14 h-14 min-w-[3.5rem] rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-2xl font-bold text-orange-500">
+                        <span>@contact.Name[0]</span>
+                    </div>
+                    
+                    <!-- Contact Info -->
+                    <div class="flex flex-col gap-1 min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg text-orange-500 font-semibold">@contact.Name</span>
+                            <span class="w-3.5 h-3.5 min-w-[0.875rem] rounded-full border-2 border-white shadow-sm @(contact.IsOnline ? "bg-green-500" : "bg-gray-400")"
+                                  aria-label="@(contact.IsOnline ? "Online" : "Offline")"></span>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(contact.LastMessage))
+                        {
+                            <span class="text-base text-gray-600 overflow-hidden text-ellipsis whitespace-nowrap">@contact.LastMessage</span>
+                        }
+                    </div>
+                </div>
+
+                @if (contact.HasSosAlert)
+                {
+                    <div class="bg-red-600 text-white px-4 py-2 rounded-full text-base font-bold whitespace-nowrap shadow-md">
+                        <span>🚨 SOS</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<Contact> OnContactSelected { get; set; }
+
+    private List<Contact> contacts = new()
+    {
+        new Contact 
+        { 
+            Id = 1, 
+            Name = "Emilia", 
+            IsOnline = true, 
+            HasSosAlert = false,
+            LastMessage = "Hoe gaat het?",
+            LastMessageTime = DateTime.Now.AddMinutes(-5)
+        },
+        new Contact 
+        { 
+            Id = 2, 
+            Name = "Amber", 
+            IsOnline = false, 
+            HasSosAlert = false,
+            LastMessage = "Tot morgen!",
+            LastMessageTime = DateTime.Now.AddHours(-2)
+        },
+        new Contact 
+        { 
+            Id = 3, 
+            Name = "Laura", 
+            IsOnline = true, 
+            HasSosAlert = false,
+            LastMessage = "Wat doe je?",
+            LastMessageTime = DateTime.Now.AddMinutes(-30)
+        },
+        new Contact 
+        { 
+            Id = 4, 
+            Name = "Jitte", 
+            IsOnline = false, 
+            HasSosAlert = false,
+            LastMessage = "Bedankt voor je hulp!",
+            LastMessageTime = DateTime.Now.AddDays(-1)
+        },
+        new Contact 
+        { 
+            Id = 5, 
+            Name = "Jinthe", 
+            IsOnline = false, 
+            HasSosAlert = false,
+            LastMessage = "Spreken we af dit weekend?",
+            LastMessageTime = DateTime.Now.AddDays(-2)
+        }
+    };
+
+    private async Task SelectContact(Contact contact)
+    {
+        await OnContactSelected.InvokeAsync(contact);
+    }
+
+    private void ShowHelp()
+    {
+        // TODO: Toon help overlay
+    }
+}

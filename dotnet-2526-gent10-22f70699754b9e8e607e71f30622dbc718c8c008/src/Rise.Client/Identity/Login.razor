@@ -1,0 +1,83 @@
+@page "/"
+@layout AuthLayout
+
+<PageTitle>Login</PageTitle>
+
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="h-screen w-full flex items-start justify-center bg-white px-4 pt-20 overflow-hidden">
+            <div class="w-auto max-w-sm space-y-3">
+                <!-- Logo and Title -->
+                <div class="flex flex-col items-center space-y-1 mb-6 mt-6"> 
+                    <img class="h-32 w-auto max-w-full object-contain" src="/images/NODO_logo_transparant.png" alt="NODO Logo" />
+                    <h1 class="text-4xl font-bold text-orange-500">NODO</h1>
+                </div>
+                
+                <!-- Login Heading -->
+                <h2 class="text-2xl font-bold text-black mt-6">Login</h2>
+                
+                <!-- Login Form -->
+                <EditForm Model="Model" OnValidSubmit="LoginUser" Context="formContext" class="space-y-3">
+                    <FluentValidationValidator/>
+                    
+                    <div class="space-y-3 mt-4">
+                        <!-- Email Input -->
+                        <div>
+                            <div class="relative">
+                                <InputText @bind-Value="Model.Email" 
+                                           type="email" 
+                                           autocomplete="username" 
+                                           id="email"
+                                           class="w-full px-6 py-3 bg-orange-100 border-none rounded-full text-black placeholder-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400" 
+                                           placeholder="Email"/>
+                            </div>
+                            <ValidationMessage For="() => Model.Email" class="text-red-600 text-sm mt-1 ml-6"/>
+                        </div>
+                        
+                        <!-- Password Input -->
+                        <div>
+                            <div class="relative mt-4">
+                                <InputText @bind-Value="Model.Password" 
+                                           type="@(ShowPassword ? "text" : "password")" 
+                                           id="password"
+                                           class="w-full px-6 py-3 bg-orange-100 border-none rounded-full text-black placeholder-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400 pr-12" 
+                                           placeholder="Wachtwoord"/>
+                                <button type="button" 
+                                        @onclick="TogglePasswordVisibility"
+                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-orange-400 hover:text-orange-600">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        @if (ShowPassword)
+                                        {
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                                        }
+                                        else
+                                        {
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        }
+                                    </svg>
+                                </button>
+                            </div>
+                            <ValidationMessage For="() => Model.Password" class="text-red-600 text-sm mt-1 ml-6"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="pt-2">
+                        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-400">
+                            Login
+                        </button>
+                    </div>
+                    
+                    <!-- Register Link -->
+                    <div class="text-center pt-2">
+                        <span class="text-black text-sm">Nog geen account? </span>
+                        <a href="register" class="font-bold text-orange-500 hover:text-orange-600 transition duration-150 ease-in-out text-sm">
+                            Registreer hier!
+                        </a>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

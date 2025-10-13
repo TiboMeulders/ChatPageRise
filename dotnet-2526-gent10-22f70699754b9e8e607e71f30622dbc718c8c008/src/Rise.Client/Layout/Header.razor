@@ -1,0 +1,28 @@
+@using Rise.Client.Services
+@inject PageTitleService PageTitleService
+@implements IDisposable
+
+<header class="flex items-start justify-between px-4 py-3 border-b border-gray-200 bg-white">
+    <div class="flex flex-col">
+        <div class="flex items-center mb-1">
+            <img src="images/NODO_logo_transparant.png" alt="NODO logo" class="h-12 w-auto mr-2" />
+            <span class="text-4xl font-bold text-[#FFB347] tracking-wide">NODO</span>
+        </div>
+        <h2 class="text-xl font-semibold ml-1">@PageTitleService.PageTitle</h2>
+    </div>
+    <button class="bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-base shadow-md hover:bg-red-700 transition-colors">
+        HELP
+    </button>
+</header>
+
+@code {
+    protected override void OnInitialized()
+    {
+        PageTitleService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        PageTitleService.OnChange -= StateHasChanged;
+    }
+}
