@@ -1,0 +1,72 @@
+@using Rise.Client.Models
+@using Rise.Shared.ChatMessages
+
+<div class="h-full flex flex-col bg-white">
+    <!-- Header -->
+    <div class="flex items-center p-4 bg-white border-b-2 border-gray-200 gap-4 min-h-[70px]">
+        <button class="w-12 h-12 min-w-[3rem] bg-white border-2 border-gray-800 rounded-xl text-3xl flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors" 
+                @onclick="HandleBack" 
+                aria-label="Terug">
+            <span>←</span>
+        </button>
+        <h2 class="flex-1 m-0 text-2xl text-orange-500 font-semibold">@Contact.Name</h2>
+        <button class="w-12 h-12 min-w-[3rem] rounded-full border-2 border-gray-800 bg-white text-xl font-bold flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors" 
+                @onclick="ShowHelp" 
+                aria-label="Hulp">
+            <span>?</span>
+        </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-gray-50">
+        @foreach (var message in _messages)
+        {
+            <div class="flex flex-col max-w-[75%] @(message.IsFromCurrentUser ? "self-end items-end" : "self-start items-start") animate-fade-in">
+                <div class="px-5 py-4 rounded-3xl shadow-sm @(message.IsFromCurrentUser ? "bg-orange-500 text-white rounded-br-md" : "bg-white text-gray-800 border border-gray-200 rounded-bl-md")">
+                    @if (message.IsCensored)
+                    {
+                        <span class="text-2xl tracking-widest">***</span>
+                    }
+                    else
+                    {
+                        <span class="text-lg leading-relaxed">@message.Payload</span>
+                    }
+                </div>
+                <span class="text-sm text-gray-500 mt-1 px-2">@message.Timestamp.ToString("HH:mm")</span>
+            </div>
+        }
+    </div>
+
+    <!-- Quick Replies -->
+    <div class="flex gap-2 p-4 bg-white border-t-2 border-gray-200 overflow-x-auto">
+        <button class="bg-orange-500 text-white px-7 py-3.5 rounded-full font-semibold text-base hover:bg-orange-600 active:bg-orange-700 active:scale-95 transition-all min-h-[50px] whitespace-nowrap flex-shrink-0" 
+                @onclick='() => SendQuickMessage("Hallo!")'>
+            Hallo!
+        </button>
+        <button class="bg-orange-500 text-white px-7 py-3.5 rounded-full font-semibold text-base hover:bg-orange-600 active:bg-orange-700 active:scale-95 transition-all min-h-[50px] whitespace-nowrap flex-shrink-0" 
+                @onclick='() => SendQuickMessage("Alles goed?")'>
+            Alles goed?
+        </button>
+        <button class="bg-orange-500 text-white px-7 py-3.5 rounded-full font-semibold text-base hover:bg-orange-600 active:bg-orange-700 active:scale-95 transition-all min-h-[50px] whitespace-nowrap flex-shrink-0" 
+                @onclick='() => SendQuickMessage("Wat doe je?")'>
+            Wat doe je?
+        </button>
+    </div>
+
+    <!-- Input -->
+    <div class="flex gap-2 p-4 bg-white border-t-2 border-gray-200">
+        <input type="text"
+               @bind="Model.Payload"
+               @bind:event="oninput"
+               @onkeydown="HandleKeyDown"
+               placeholder="Typ je bericht..."
+               class="flex-1 px-5 py-4 border-2 border-gray-300 rounded-full text-lg focus:outline-none focus:border-orange-500 transition-colors min-h-[50px]"
+               maxlength="500" />
+        <button class="w-14 h-14 min-w-[3.5rem] rounded-full bg-orange-500 text-white text-3xl flex items-center justify-center disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-orange-600 active:bg-orange-700 active:scale-95 transition-all flex-shrink-0"
+                @onclick="SendMessage"
+                disabled="@string.IsNullOrWhiteSpace(Model.Payload)"
+                aria-label="Verstuur bericht">
+            <span>➤</span>
+        </button>
+    </div>
+</div>
