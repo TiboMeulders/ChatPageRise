@@ -1,0 +1,124 @@
+@page "/profile"
+@using Rise.Client.Services
+@using Rise.Client.Components
+@inject NavigationManager Navigation
+@inject PageTitleService PageTitleService
+<PageTitle>Profiel</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="min-h-screen bg-gray-50 pb-24">
+        <div class="p-4">
+            <p class="text-gray-600">Profiel wordt geladen...</p>
+        </div>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(_loadError))
+{
+    <div class="min-h-screen bg-gray-50 pb-24">
+        <div class="p-4">
+            <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg">
+                @_loadError
+            </div>
+        </div>
+    </div>
+}
+else if (_displayAccount is not null)
+{
+    <div class="min-h-screen bg-gray-50 pb-24">
+        <div class="p-4">
+            <!-- Profile Section -->
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <div class="flex justify-end mb-4">
+                    <button @onclick="NavigateToEditProfile" class="text-orange-500 hover:text-orange-600 font-semibold text-sm flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Profiel aanpassen
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Left: User Info -->
+                    <div class="flex flex-col justify-center">
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-500 font-bold">Voornaam</span>
+                            <p class="text-gray-800">@_displayAccount.FirstName</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-500 font-bold">Achternaam</span>
+                            <p class="text-gray-800">@_displayAccount.LastName</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-500 font-bold">Voornaamwoorden</span>
+                            <p class="text-gray-800">@(_displayAccount.Pronouns ?? "-")</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-sm text-gray-500 font-bold">Geboortedatum</span>
+                            <p class="text-gray-800">@_displayAccount.BirthDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+
+                        <div>
+                            <span class="text-sm text-gray-500 font-bold">Bio</span>
+                            <p class="text-gray-800">@(_displayAccount.Bio ?? "-")</p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Avatar and Button -->
+                    <div class="flex flex-col items-center justify-center">
+                        <!-- Profile Avatar (reusable component) -->
+                        <ProfileAvatar FirstName="@_displayAccount.FirstName"
+                                       LastName="@_displayAccount.LastName"
+                                       Size="mx-auto 2xl"
+                                       Class="mb-4" />
+
+                        <!-- Messages Button -->
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-colors">
+                            Berichten
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fun Facts Section -->
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+                <h2 class="text-xl font-bold text-orange-500 mb-6">Fun Facts</h2>
+                
+                @if (_funFacts.Any())
+                {
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        @foreach (var fact in _funFacts.Take(4))
+                        {
+                            <div class="bg-gray-200 rounded-full py-3 px-4 text-center">
+                                <span class="text-gray-700 font-medium text-sm">@fact</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-sm text-gray-500 mb-6">Nog geen fun facts toegevoegd.</p>
+                }
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="bg-gray-200 hover:bg-gray-300 rounded-full py-6 px-4 text-center transition-colors"
+                            @onclick="AddFunFact">
+                        <svg class="w-8 h-8 text-gray-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </button>
+                    
+                    <button class="bg-gray-200 hover:bg-gray-300 rounded-full py-6 px-4 text-center transition-colors"
+                            @onclick="AddFunFact">
+                        <svg class="w-8 h-8 text-gray-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

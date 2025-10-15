@@ -1,0 +1,14 @@
+@inject IJSRuntime JSRuntime
+
+<button @onclick="GoBack" class="flex items-center mb-4 p-2 hover:bg-gray-100 rounded-full">
+    <img src="/icons/back.svg" alt="Terug" class="w-6 h-6 mr-2" />
+    <span class="text-orange-500 font-medium">Terug</span>
+</button>
+
+@code {
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+}
+

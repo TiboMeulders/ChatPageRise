@@ -1,0 +1,71 @@
+@attribute [AllowAnonymous]
+@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
+@using Rise.Client.Components
+@using Rise.Client.Services
+@using Rise.Shared.ChatMessages
+@inject PageTitleService PageTitleService
+@inject NavBarVisibilityService NavBarVisibility
+@inject NavigationManager Navigation
+
+
+<PageTitle>Chat - NODO</PageTitle>
+
+<div class="w-full h-screen bg-white">
+    @if (_selectedContact != null)
+    {
+        <!-- Mobile: alleen chatvenster -->
+        <div class="block md:hidden w-full h-full bg-white">
+            <ChatWindow Contact="@_selectedContact" OnBack="ClearSelection" />
+        </div>
+        
+        <!-- Desktop: beide panelen -->
+        <div class="hidden md:flex w-full h-full bg-white">
+            <div class="w-96 border-r-2 border-gray-300 flex-shrink-0 h-full bg-white">
+                <ChatList OnContactSelected="SelectContact" />
+            </div>
+            <div class="flex-1 h-full bg-white">
+                <ChatWindow Contact="@_selectedContact" OnBack="ClearSelection" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Alleen contactenlijst -->
+        <div class="w-full h-full bg-white">
+            <ChatList OnContactSelected="SelectContact" />
+        </div>
+    }
+</div>
+
+@code {
+    private Contact? _selectedContact;
+    private HubConnection? hubConnection;
+    private List<string> messages = [];
+    private string? userInput;
+    private string? messageInput;
+
+    protected override void OnInitialized()
+    {
+        PageTitleService.PageTitle = "Chat";
+        UpdateNavBarVisibility();
+    }
+
+    private void SelectContact(Contact contact)
+    {
+        _selectedContact = contact;
+        UpdateNavBarVisibility();
+    }
+
+    private void ClearSelection()
+    {
+        _selectedContact = null;
+        UpdateNavBarVisibility();
+    }
+
+    private void UpdateNavBarVisibility()
+    {
+        // Verberg navbar alleen op mobiel wanneer een contact is geselecteerd
+        NavBarVisibility.IsVisible = _selectedContact == null;
+    }
+}

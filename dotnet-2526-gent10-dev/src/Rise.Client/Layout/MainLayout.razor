@@ -1,0 +1,26 @@
+@inherits LayoutComponentBase
+@using Rise.Client.Services
+@inject NavBarVisibilityService NavBarVisibility
+@implements IDisposable
+
+<div class="min-h-screen flex flex-col overflow-x-hidden">
+    <Header/>
+    <main class="flex-1 overflow-y-auto @(NavBarVisibility.IsVisible ? "pb-20" : "")">
+        <section class="section">
+            @Body
+        </section>
+    </main>
+    <NavBar/>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavBarVisibility.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        NavBarVisibility.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,112 @@
+@page "/edit-profile/{UserId:int}"
+@using Rise.Client.Services
+@using Rise.Client.Components
+@inject NavigationManager Navigation
+@inject PageTitleService PageTitleService
+
+<PageTitle>Profiel Aanpassen</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="min-h-screen bg-gray-50 pb-24">
+        <div class="p-4">
+            <p class="text-gray-600">Profielgegevens worden geladen...</p>
+        </div>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(_loadError))
+{
+    <div class="min-h-screen bg-gray-50 pb-24">
+        <div class="p-4">
+            <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg">
+                @_loadError
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="min-h-screen bg-gray-50 pb-24">
+        <div class="p-4">
+            <div class="flex items-center mb-1">
+                <BackButton />
+            </div>
+
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <!-- <div class="text-center mb-6">
+                    <button @onclick="ChangeProfilePhoto" class="relative group inline-block">
+                        <ProfileAvatar FirstName="@_editedUser.FirstName"
+                                       LastName="@_editedUser.LastName"
+                                       Size="xl" />
+                    </button>
+                    <p class="text-gray-500 text-sm mt-2">Klik op de foto om deze te wijzigen</p>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(_saveError))
+                {
+                    <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">
+                        @_saveError
+                    </div>
+                } -->
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Voornaam</label>
+                        <input type="text" @bind="_editedUser.FirstName"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                               placeholder="Voornaam" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Achternaam</label>
+                        <input type="text" @bind="_editedUser.LastName"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                               placeholder="Achternaam" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Voornaamwoorden</label>
+                        <input type="text" @bind="_editedUser.Pronouns"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                               placeholder="bijv. zij/haar" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
+                        <input type="email" value="@_editedUser.Email"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                               readonly />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Geboortedatum</label>
+                        <input type="text" value="@_editedUser.BirthDate"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                               readonly />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Bio</label>
+                        <textarea @bind="_editedUser.Bio" rows="4"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                                  placeholder="Vertel iets over jezelf..."></textarea>
+                        <p class="text-gray-500 text-xs mt-1">@((_editedUser.Bio?.Length ?? 0)) / 200 karakters</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button @onclick="CancelEdit"
+                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-full transition-colors disabled:opacity-60"
+                            disabled="@_isSaving">
+                        Annuleren
+                    </button>
+                    <button @onclick="SaveProfile"
+                            class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-full transition-colors disabled:opacity-60"
+                            disabled="@_isSaving">
+                        @(_isSaving ? "Opslaan..." : "Opslaan")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

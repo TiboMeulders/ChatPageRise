@@ -1,0 +1,13 @@
+<div @onclick="HandleClick"
+     class="inline-flex items-center justify-center rounded-full select-none @CssSize @CssBase @Class"
+     title="@Title">
+    @if (!string.IsNullOrWhiteSpace(ImageUrl))
+    {
+        <img src="@ImageUrl" alt="Avatar" class="rounded-full object-cover w-full h-full" />
+    }
+    else
+    {
+        <span class="@CssText">@GetInitials(FirstName, LastName)</span>
+    }
+</div>
+
